@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  become: yes
+  roles:
+    - {role: disa-v1r6, tags: ['disa'] }
