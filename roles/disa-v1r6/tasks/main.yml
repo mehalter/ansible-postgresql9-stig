@@ -1,1 +1,46 @@
 ---
+
+- name: "CAT II | PGS9-00-000100 | PostgreSQL must be configured to prohibit or restrict the use of organization-defined functions, ports, protocols, and/or services, as defined in the PPSM CAL and vulnerability assessments."
+  lineinfile:
+    dest: "{{ PGDATA }}/postgresql.conf"
+    regexp: ^#?port
+    line: "port = 5432"
+  notify: restart postgresql
+    
+- name: "CAT II | PGS9-00-000400 | The audit information produced by PostgreSQL must be protected from unauthorized modification"
+  lineinfile:
+    dest: "{{ PGDATA }}/postgresql.conf"
+    regexp: ^#?log_file_mode
+    line: "log_file_mode = 0600"
+  notify: restart postgresql
+
+- name: "CAT II | PGS9-00-000600	 | The audit information produced by PostgreSQL must be protected from unauthorized modification"
+  lineinfile:
+    dest: "{{ PGDATA }}/postgresql.conf"
+    regexp: ^#?client_min_messages
+    line: "client_min_messages = error "
+  notify: restart postgresql
+
+- name: " CAT II | PGS9-00-000700 | Privileges to change PostgreSQL software modules must be limited."
+  block:
+    - name: "change the ownership configuration files in PGDATA"
+      shell: "chown postgres:postgres {{ PGDATA }}/postgresql.conf"
+      failed_when: "'FAILED' in command_result.stderr" 
+    - name: "change the and permissions of files in PGDATA "
+      shell: "chmod 0600 {{ PGDATA }}/postgresql.conf"
+      failed_when: "'FAILED' in command_result.stderr" 
+
+    - name: " change the ownership of shared objects in /usr/pgsql-${PGVER?}/*.so "
+      shell: "chown root:root /usr/pgsql-{{ PGVER }}/lib/*.so"
+      failed_when: "'FAILED' in command_result.stderr" 
+    - name: " change the opermissions of shared objects in /usr/pgsql-${PGVER?}/*.so "
+      shell: "chmod 0755 /usr/pgsql-{{ PGVER }}/lib/*.so"
+      failed_when: "'FAILED' in command_result.stderr" 
+            
+    - name: "change the ownership of executables in /usr/pgsql-${PGVER?}/bin:"
+      shell: "chown root:root /usr/pgsql-{{ PGVER }}/bin/*"
+      failed_when: "'FAILED' in command_result.stderr" 
+    - name: "change the permissions of executables in /usr/pgsql-${PGVER?}/bin:"
+      shell: "chmod 0755 /usr/pgsql-{{ PGVER }}/bin/*"
+      failed_when: "'FAILED' in command_result.stderr" 
+

@@ -7,3 +7,5 @@ PostgreSQL to the DoD STIG v1r6.
 
 | Severity | Vulid   | STIG-ID        |
 |----------|---------|----------------|
+| CAT II   | V-72843 | PGS9-00-000200 |
+| CAT II   | V-72849 | PGS9-00-000500 |
