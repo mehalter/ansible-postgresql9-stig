@@ -1,3 +1,4 @@
 ---
 PGVER: 9.5
 PGDATA: /var/lib/pgsql/9.5/data
+max_connections: 10
