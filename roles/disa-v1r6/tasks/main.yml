@@ -44,3 +44,16 @@
       shell: "chmod 0755 /usr/pgsql-{{ PGVER }}/bin/*"
       failed_when: "'FAILED' in command_result.stderr" 
 
+- name: " CAT II | PGS9-00-000800 | If passwords are used for authentication, PostgreSQL must transmit only encrypted representations of passwords."
+  replace:
+    dest: "{{ PGDATA }}/postgresql.conf"
+    regexp: password
+    replace: "md5"    
+
+- name: "CAT II | PGS9-00-001200 |  PostgreSQL must limit the number of concurrent sessions to an organization-defined number per user for all accounts and/or account types"
+  lineinfile:
+    dest: "{{ PGDATA }}/postgresql.conf"
+    regexp: max_connections
+    line: "max_commnections = {{ max_connections }}"
+  notify: restart postgresql
+
