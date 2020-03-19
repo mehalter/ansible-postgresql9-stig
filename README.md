@@ -8,7 +8,7 @@ PostgreSQL to the DoD STIG v1r6.
 | Severity | Vulid   | STIG-ID        | Note                                                             |
 |----------|---------|----------------|------------------------------------------------------------------|
 | CAT II   | V-72843 | PGS9-00-000200 | setup pgaudit                                                    |
-| CAT II   | V-72845 | PGS9-00-000300 | security updates                                                 |
+| CAT I    | V-72845 | PGS9-00-000300 | security updates                                                 |
 | CAT II   | V-72849 | PGS9-00-000500 | organization level authentication                                |
 | CAT II   | V-72855 | PGS9-00-000710 | limit privleges to specific users/tasks                          |
 | CAT II   | V-72859 | PGS9-00-000900 | authentication requirements                                      |
@@ -60,9 +60,9 @@ PostgreSQL to the DoD STIG v1r6.
 | CAT II   | V-72983 | PGS9-00-007400 | set up pgaudit (Appendix B)                                      |
 | CAT II   | V-72985 | PGS9-00-007700 | set up logging (Appendix C)                                      |
 | CAT II   | V-72987 | PGS9-00-007800 | set up logging (Appendix C)                                      |
-| CAT II   | V-72989 | PGS9-00-008000 | enable FIPS                                                      |
+| CAT I    | V-72989 | PGS9-00-008000 | enable FIPS                                                      |
 | CAT II   | V-72991 | PGS9-00-008100 | set up ssl (Appendix G)                                          |
-| CAT II   | V-72993 | PGS9-00-008200 | enable FIPS                                                      |
+| CAT I    | V-72993 | PGS9-00-008200 | enable FIPS                                                      |
 | CAT II   | V-72995 | PGS9-00-008300 | set up pgcrypto (Appendix E)                                     |
 | CAT II   | V-72997 | PGS9-00-008400 | maintain appropriate permissions                                 |
 | CAT II   | V-72999 | PGS9-00-008500 | separate admins and general users                                |
@@ -78,7 +78,7 @@ PostgreSQL to the DoD STIG v1r6.
 | CAT II   | V-73023 | PGS9-00-009900 | notify sys admin when audit space hits 75% capacity              |
 | CAT II   | V-73025 | PGS9-00-010000 | pgaudit log (set with PGS9-00-004400)                            |
 | CAT II   | V-73027 | PGS9-00-010100 | postgresql must require reauthentication when necessary          |
-| CAT II   | V-73029 | PGS9-00-010200 | make sure ssl keys are stored in a protected directory           |
+| CAT I    | V-73029 | PGS9-00-010200 | make sure ssl keys are stored in a protected directory           |
 | CAT II   | V-73031 | PGS9-00-010300 | set up ssl (Appendix G)                                          |
 | CAT II   | V-73033 | PGS9-00-010400 | log connections (set with PGS9-00-004600)                        |
 | CAT II   | V-73035 | PGS9-00-010500 | set up pgcrypto (Appendix E)                                     |
@@ -89,13 +89,13 @@ PostgreSQL to the DoD STIG v1r6.
 | CAT II   | V-73047 | PGS9-00-011400 | set up ssl (Appendix G)                                          |
 | CAT II   | V-73049 | PGS9-00-011500 | require unique authentication for all roles                      |
 | CAT II   | V-73051 | PGS9-00-011600 | automatically disconnect users after timeout (Appendix A)        |
-| CAT II   | V-73053 | PGS9-00-011700 | maintain appropriate permissions                                 |
+| CAT I    | V-73053 | PGS9-00-011700 | maintain appropriate permissions                                 |
 | CAT II   | V-73055 | PGS9-00-011800 | set up ssl (Appendix G)                                          |
 | CAT II   | V-73057 | PGS9-00-011900 | protect data during data transfer                                |
 | CAT II   | V-73059 | PGS9-00-012000 | maintain appropriate permissions                                 |
 | CAT II   | V-73061 | PGS9-00-012200 | logging permissions (same as PGS9-00-000400)                     |
-| CAT II   | V-73063 | PGS9-00-012300 | set up ssl (Appendix G)                                          |
+| CAT I    | V-73063 | PGS9-00-012300 | set up ssl (Appendix G)                                          |
 | CAT II   | V-73065 | PGS9-00-012500 | pgaudit log (set with PGS9-00-004400)                            |
 | CAT II   | V-73067 | PGS9-00-012600 | log connections (set with PGS9-00-004600)                        |
 | CAT II   | V-73069 | PGS9-00-012700 | log connections (set with PGS9-00-004600)                        |
-| CAT II   | V-73071 | PGS9-00-012800 | enable FIPS                                                      |
+| CAT I    | V-73071 | PGS9-00-012800 | enable FIPS                                                      |
