@@ -104,6 +104,12 @@ log_min_error_statement = error
 log_min_duration_statement = -1
 ```
 
+Add the following rule to `/etc/rsyslog.conf`
+
+```
+local0.*    /var/log/postgresql
+```
+
 # Install pgcrypto
 
 Run
