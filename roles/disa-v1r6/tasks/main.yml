@@ -24,13 +24,6 @@
       shell: "chmod 0600 {{ PGDATA }}/{{ log_directory }}/*.log"
   notify: restart postgresql
 
-- name: "CAT II | PGS9-00-000600	 | The audit information produced by PostgreSQL must be protected from unauthorized modification"
-  lineinfile:
-    dest: "{{ PGDATA }}/postgresql.conf"
-    regexp: ^#?client_min_messages
-    line: "client_min_messages = error"
-  notify: restart postgresql
-
 - name: " CAT II | PGS9-00-000700 | Privileges to change PostgreSQL software modules must be limited."
   block:
     - name: "configure permissions of postgresql configuration file"
@@ -39,22 +32,22 @@
         owner: "postgres"
         group: "postgres"
         mode: "0600"
-    - name: " change the ownership of shared objects in /usr/pgsql-${PGVER?}/*.so "
+    - name: " change the ownership of shared objects in /usr/pgsql-{{ PGVER }}/*.so "
       shell: "chown root:root /usr/pgsql-{{ PGVER }}/lib/*.so"
       failed_when: "'FAILED' in command_result.stderr"
-    - name: " change the opermissions of shared objects in /usr/pgsql-${PGVER?}/*.so "
-      shell: "chmod 0755 /usr/pgsql-${PGVER?}/lib/*.so"
+    - name: " change the opermissions of shared objects in /usr/pgsql-{{ PGVER }}/*.so "
+      shell: "chmod 0755 /usr/pgsql-{{ PGVER }}/lib/*.so"
       failed_when: "'FAILED' in command_result.stderr"
-    - name: "change the ownership of executables in /usr/pgsql-${PGVER?}/bin:"
-      shell: "chown root:root /usr/pgsql-${PGVER?}/bin/*"
+    - name: "change the ownership of executables in /usr/pgsql-{{ PGVER }}/bin:"
+      shell: "chown root:root /usr/pgsql-{{ PGVER }}/bin/*"
       failed_when: "'FAILED' in command_result.stderr"
-    - name: "change the permissions of executables in /usr/pgsql-${PGVER?}/bin:"
-      shell: "chmod 0755 /usr/pgsql-${PGVER?}/bin/*"
+    - name: "change the permissions of executables in /usr/pgsql-{{ PGVER }}/bin:"
+      shell: "chmod 0755 /usr/pgsql-{{ PGVER }}/bin/*"
       failed_when: "'FAILED' in command_result.stderr"
 
 - name: " CAT II | PGS9-00-000800 | If passwords are used for authentication, PostgreSQL must transmit only encrypted representations of passwords."
   replace:
-    dest: "{{ PGDATA }}/postgresql.conf"
+    dest: "{{ PGDATA }}/pg_hba.conf"
     regexp: password
     replace: "md5"
 
@@ -147,7 +140,7 @@
   lineinfile:
     dest: "{{ PGDATA }}/postgresql.conf"
     regexp: ^#?password_encryption
-    line: "password_encryption = on"
+    line: "password_encryption = md5"
   notify: restart postgresql
 
 - name: "CAT II | PGS9-00-010600 | PostgreSQL must invalidate session identifiers upon user logout or other session termination."

@@ -1,7 +1,8 @@
 PGPORT: "5432"
 PGDATA: "/var/lib/postgres/data"
+PGVER: "12"
 log_directory: "log"
-log_timezone: "EST"
-log_prefix: "< %m %a %u %d %r %p %i %e %s>"
+log_timezone: "America/New_York"
+log_prefix: "%m %u %d %r: "
 
 max_connections: 10
