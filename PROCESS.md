@@ -210,3 +210,12 @@ Set the defaults in `roles/disa-v1r6/defaults/main.yml`
 ```
 $~ sudo ansible-playbook playbook.yml
 ```
+
+# TODO
+
+- `PGS9-00-002700`: real-time alerts on audit failures. If we set this up for
+  `rsyslog`, then it should automatically work
+- `PGS9-00-008000`: FIPS enabled (other rules need this as well)
+- `PGS9-00-009900`: 75% audit capacity warning, still going to `rsyslog`. If
+  we set that up with 75% audit capacity warning, we should be good.
+- `PGS9-00-011600`: cron script to terminate sessions after defined trigger events
