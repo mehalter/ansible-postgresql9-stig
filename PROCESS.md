@@ -121,37 +121,87 @@ $~ psql -c "CREATE EXTENSION pgcrypto"
 
 # Setup SSL
 
-Work In Progress:
+## Create SSL Certificates
 
 ```
-$~ sudo su - postgres
-$~ cd $PGDATA
-$~ mkdir pg_ssl
-$~ cd pg_ssl
-
+# Create Self-Signed certificate
 $~ openssl genrsa -aes256 -out ca.key 4096
 $~ openssl req -new -x509 -sha256 -days 1825 -key ca.key -out ca.crt -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=root-ca"
 
+# Create Server Intermediate Certificate
 $~ openssl genrsa -aes256 -out server-intermediate.key 4096
 $~ openssl req -new -sha256 -days 1825 -key server-intermediate.key -out server-intermediate.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=server-im-ca"
 $~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions v3_ca -req -days 1825 -CA ca.crt -CAkey ca.key -CAcreateserial -in server-intermediate.csr -out server-intermediate.crt
 
+# Create Client Intermediate Certificate
 $~ openssl genrsa -aes256 -out client-intermediate.key 4096
 $~ openssl req -new -sha256 -days 1825 -key client-intermediate.key -out client-intermediate.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=client-im-ca"
 $~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions v3_ca -req -days 1825 -CA ca.crt -CAkey ca.key -CAcreateserial -in client-intermediate.csr -out client-intermediate.crt
 
+# Create Server Certificate
 # replace dbase01 with hostname:
 $~ openssl req -nodes -new -newkey rsa:4096 -sha256 -keyout server.key -out server.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=dbase01"
 $~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions usr_cert -req -days 1825 -CA server-intermediate.crt -CAkey server-intermediate.key -CAcreateserial -in server.csr -out server.crt
 
+# Create Client Certificate
 # client cert must be mapped to a postgres role either username or adding an ident_map
 $~ openssl req -nodes -new -newkey rsa:4096 -sha256 -keyout client.key -out client.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=ident_map"
 $~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions usr_cert -req -days 1825 -CA client-intermediate.crt -CAkey client-intermediate.key -CAcreateserial -in client.csr -out client.crt
 
 $~ cat server.crt server-intermediate.crt ca.crt > ./server-full.crt
+# place ca.crt, server.key, server-full.crt in the $PGDATA directory
+# chown them postgres:postgres
+# chmod them 600
+```
 
+## Configure Postgresql to use SSL
+
+```
+# Create role named same as client certificate
 $~ psql -c "CREATE ROLE ident_map LOGIN"
 ```
+
+Configure `ssl` certificates in `$PGDATA/postgresql.conf` (update file paths as needed):
+
+```
+ssl = true
+ssl_cert_file = 'server-full.crt'
+ssl_key_file = 'server.key'
+ssl_ca_file = 'ca.crt'
+```
+
+Configure `$PGDATA/pg_ident.conf`:
+
+```
+ssl-test    ident_map    identmap
+```
+
+Configure `$PGDATA/pg_hba.conf` (replace `dbase01` with host name):
+
+```
+hostssl     all     all     dbase01/32    cert clientcert=1 map=ssl-test
+hostssl     all     all     ::1/128       cert clientcert=1 map=ssl-test
+```
+
+## Configure Clients
+
+Copy the certificates on the client (update paths as needed)
+
+```
+$~ mkdir $CLIENT_HOME/.postgresql
+$~ cp ca.crt $CLIENT_HOME/.postgresql/root.crt
+$~ cp client.key $CLIENT_HOME/.postgresql/postgresql.key
+$~ cat client.crt client-intermediate.crt ca.crt > $CLIENT_HOME/.postgresql/postgresql.crt
+$~ chmod 600 $CLIENT_HOME/.postgresql/*
+```
+
+Test the client (replace `dbase01` with host name):
+
+```
+$~ psql "postgresql://dbase01:5432/postgres?sslmode=verify-full" -U ident_map
+```
+
+Make sure all of the client roles inherit the `ident_map` role, and the ssl certificates should work.
 
 # Run the ansible
 
