@@ -121,7 +121,37 @@ $~ psql -c "CREATE EXTENSION pgcrypto"
 
 # Setup SSL
 
-COMING SOON...
+Work In Progress:
+
+```
+$~ sudo su - postgres
+$~ cd $PGDATA
+$~ mkdir pg_ssl
+$~ cd pg_ssl
+
+$~ openssl genrsa -aes256 -out ca.key 4096
+$~ openssl req -new -x509 -sha256 -days 1825 -key ca.key -out ca.crt -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=root-ca"
+
+$~ openssl genrsa -aes256 -out server-intermediate.key 4096
+$~ openssl req -new -sha256 -days 1825 -key server-intermediate.key -out server-intermediate.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=server-im-ca"
+$~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions v3_ca -req -days 1825 -CA ca.crt -CAkey ca.key -CAcreateserial -in server-intermediate.csr -out server-intermediate.crt
+
+$~ openssl genrsa -aes256 -out client-intermediate.key 4096
+$~ openssl req -new -sha256 -days 1825 -key client-intermediate.key -out client-intermediate.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=client-im-ca"
+$~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions v3_ca -req -days 1825 -CA ca.crt -CAkey ca.key -CAcreateserial -in client-intermediate.csr -out client-intermediate.crt
+
+# replace dbase01 with hostname:
+$~ openssl req -nodes -new -newkey rsa:4096 -sha256 -keyout server.key -out server.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=dbase01"
+$~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions usr_cert -req -days 1825 -CA server-intermediate.crt -CAkey server-intermediate.key -CAcreateserial -in server.csr -out server.crt
+
+# client cert must be mapped to a postgres role either username or adding an ident_map
+$~ openssl req -nodes -new -newkey rsa:4096 -sha256 -keyout client.key -out client.csr -subj "/C=US/ST=GA/L=Atlanta/O=GTRI/CN=ident_map"
+$~ openssl x509 -extfile /etc/pki/tls/openssl.cnf -extensions usr_cert -req -days 1825 -CA client-intermediate.crt -CAkey client-intermediate.key -CAcreateserial -in client.csr -out client.crt
+
+$~ cat server.crt server-intermediate.crt ca.crt > ./server-full.crt
+
+$~ psql -c "CREATE ROLE ident_map LOGIN"
+```
 
 # Run the ansible
 
